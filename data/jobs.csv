@@ -1,0 +1,7 @@
+job_title,category,required_skills
+Python Developer,Software Developer,"python, django, flask, sql, git"
+Frontend Developer,Software Developer,"html, css, javascript, react"
+SEO Specialist,Digital Marketing,"seo, sem, google ads"
+UI/UX Designer,UI/UX Designer,"figma, wireframe, prototype, design system"
+Data Analyst,Data Analyst,"excel, sql, power bi, visualization"
+Machine Learning Engineer,Machine Learning,"python, numpy, pandas, sklearn"

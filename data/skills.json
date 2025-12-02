@@ -1,0 +1,17 @@
+{
+    "Software Developer": [
+        "python", "django", "flask", "api", "sql", "git", "html", "css", "javascript", "react"
+    ],
+    "Digital Marketing": [
+        "seo", "sem", "google ads", "facebook ads", "content writing", "analytics", "email marketing"
+    ],
+    "UI/UX Designer": [
+        "figma", "wireframe", "prototype", "user research", "ux writing", "design systems"
+    ],
+    "Data Analyst": [
+        "excel", "sql", "power bi", "tableau", "data cleaning", "visualization", "statistics"
+    ],
+    "Machine Learning": [
+        "python", "pandas", "numpy", "sklearn", "training models", "feature engineering"
+    ]
+}
