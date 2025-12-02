@@ -21,6 +21,19 @@ def predict_category(resume_text: str):
     return category
 
 def analyze_resume_text(resume_text: str, user_id: str=None, filename: str=None):
+    # Validate input
+    if not resume_text or len(resume_text.strip()) < 20:
+        return {
+            "error": "Resume text is too short or empty. Please upload a valid PDF or DOCX file.",
+            "category": None,
+            "skills": {"present": []},
+            "missing_skills": [],
+            "ats_score": 0,
+            "match_score": 0,
+            "best_job": None,
+            "explanations": {"why_missing": "Invalid resume", "top_keywords": []}
+        }
+    
     # 1) Predict category
     category = predict_category(resume_text)
 
@@ -49,7 +62,7 @@ def analyze_resume_text(resume_text: str, user_id: str=None, filename: str=None)
         "match_score": match_score,
         "best_job": best_job,
         "explanations": {
-            "why_missing": f"Missing skills for {category}: {', '.join(missing_skills)}",
+            "why_missing": f"Missing skills for {category}: {', '.join(missing_skills) if missing_skills else 'None'}" if missing_skills else f"Great! No missing skills for {category}",
             "top_keywords": present_skills
         }
     }
