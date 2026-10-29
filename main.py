@@ -21,6 +21,10 @@ app.add_middleware(
 def read_root():
     return {"message": "ATS Resume Analyzer API is live!"}
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 db.init_db()
@@ -47,28 +51,25 @@ def extract_text_from_file(path: str):
 @app.post("/v1/analyzeResume")
 async def analyze_resume(user_id: str = Form(None), file: UploadFile = File(...)):
     # save uploaded file
-    file_suffix = file.filename.split(".")[-1]
+    original_filename = file.filename or "resume"
+    file_suffix = original_filename.rsplit(".", 1)[-1] if "." in original_filename else "bin"
     tmp_name = f"{uuid.uuid4()}.{file_suffix}"
     tmp_path = os.path.join(UPLOAD_DIR, tmp_name)
 
-    with open(tmp_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-
-    # extract text
     try:
-        resume_text = extract_text_from_file(tmp_path)
-    except Exception as e:
-        os.remove(tmp_path)
-        raise HTTPException(status_code=400, detail=f"Failed to extract text: {e}")
+        with open(tmp_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
 
-    # run analysis
-    analysis = analyze_resume_text(resume_text, user_id=user_id, filename=file.filename)
+        try:
+            resume_text = extract_text_from_file(tmp_path)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Failed to extract text: {e}") from e
 
-    # save to DB
-    db.save_analysis(user_id or "anonymous", file.filename, resume_text, analysis)
-
-    # delete uploaded file to save disk (optional)
-    os.remove(tmp_path)
+        analysis = analyze_resume_text(resume_text, user_id=user_id, filename=original_filename)
+        db.save_analysis(user_id or "anonymous", original_filename, resume_text, analysis)
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
 
     return analysis
 
