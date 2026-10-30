@@ -2,9 +2,10 @@
 import sqlite3
 from datetime import datetime
 import json
+from pathlib import Path
 from typing import Any, Dict
 
-DB_PATH = "ats_data.db"
+DB_PATH = str(Path(__file__).resolve().parent / "ats_data.db")
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)

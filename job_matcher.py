@@ -1,47 +1,48 @@
-import pandas as pd
-import json
+from pathlib import Path
 import re
+from typing import Iterable
 
-def preprocess(x):
-    return re.sub(r'[^a-zA-Z0-9\s]', ' ', x.lower())
+import pandas as pd
 
-def load_jobs(path="data/jobs.csv"):
-    return pd.read_csv(path)
+BASE_DIR = Path(__file__).resolve().parent
 
-def load_skill_dict(path="data/skills.json"):
-    with open(path, "r") as f:
-        return json.load(f)
 
-def calculate_match_score(present_skills, required_skills):
-    if len(required_skills) == 0:
+def _normalize(value: str) -> str:
+    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9+#./\s-]", " ", value.casefold())).strip()
+
+
+def _canonical(value: str) -> str:
+    aliases = {"sklearn": "scikit-learn", "powerbi": "power bi", "power-bi": "power bi", "js": "javascript"}
+    value = _normalize(value)
+    return aliases.get(value, value)
+
+
+def load_jobs(path: str | Path | None = None) -> pd.DataFrame:
+    return pd.read_csv(path or BASE_DIR / "data" / "jobs.csv")
+
+
+def calculate_match_score(present_skills: Iterable[str], required_skills: Iterable[str]) -> int:
+    required = {_canonical(skill) for skill in required_skills if _canonical(skill)}
+    present = {_canonical(skill) for skill in present_skills if _canonical(skill)}
+    if not required:
         return 0
+    return min(100, int(round(len(required & present) / len(required) * 100)))
 
-    present_count = sum(1 for skill in required_skills if skill in present_skills)
-    return int((present_count / len(required_skills)) * 100)
 
-def match_best_job(category, present_skills):
-    jobs = load_jobs()
-    jobs = jobs[jobs["category"] == category]
-
+def match_best_job(category: str | None, present_skills: Iterable[str], jobs: pd.DataFrame | None = None) -> dict | None:
+    if not category:
+        return None
+    frame = jobs if jobs is not None else load_jobs()
+    if "category" not in frame or "required_skills" not in frame:
+        return None
+    candidates = frame[frame["category"].astype(str).str.casefold() == category.casefold()]
     best_job = None
     best_score = -1
-
-    for _, row in jobs.iterrows():
-        required = [s.strip().lower() for s in row["required_skills"].split(",")]
-
-        score = calculate_match_score(present_skills, required)
-
+    present = list(present_skills)
+    for _, row in candidates.iterrows():
+        required = [_canonical(skill) for skill in str(row["required_skills"]).split(",") if _canonical(skill)]
+        score = calculate_match_score(present, required)
         if score > best_score:
             best_score = score
-            best_job = {
-                "job_title": row["job_title"],
-                "required_skills": required,
-                "match_score": best_score
-            }
-
+            best_job = {"job_title": str(row["job_title"]), "required_skills": list(dict.fromkeys(required)), "match_score": score}
     return best_job
-
-if __name__ == "__main__":
-    present = ["python", "django", "sql"]
-    result = match_best_job("Software Developer", present)
-    print(result)
