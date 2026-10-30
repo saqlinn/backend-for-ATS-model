@@ -8,6 +8,9 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import classification_report
 import joblib
 
+MIN_EXAMPLES_PER_CLASS = 2
+
+
 def train_resume_classifier():
     # Load dataset JSONL
     dataset_path = "data/dataset.jsonl"
@@ -21,6 +24,14 @@ def train_resume_classifier():
 
     # Using only the resume text + category
     df = df[["text", "category"]]
+    counts = df["category"].value_counts()
+    insufficient = counts[counts < MIN_EXAMPLES_PER_CLASS]
+    if not insufficient.empty:
+        raise ValueError(
+            "Refusing to train: every class needs at least "
+            f"{MIN_EXAMPLES_PER_CLASS} examples. Insufficient classes: "
+            + ", ".join(f"{name} ({count})" for name, count in insufficient.items())
+        )
 
 
     # Convert categories to numeric labels
@@ -33,7 +44,9 @@ def train_resume_classifier():
     y = df["label"]
 
     # Train-test split
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
 
     # Train Naive Bayes classifier
     model = MultinomialNB()

@@ -1,7 +1,6 @@
 import os
 import shutil
 import subprocess
-import tempfile
 import uuid
 from pathlib import Path
 from typing import Any
@@ -36,6 +35,13 @@ class AnalysisResponse(BaseModel):
     status: str
     category: str | None = None
     primary_role: str | None = None
+    stated_job_title: str | None = None
+    secondary_roles: list[dict[str, Any]] = []
+    skills: dict[str, Any] = {}
+    strong_skills: list[str] = []
+    missing_skills: list[str] = []
+    score_breakdown: dict[str, Any] = {}
+    recommendations: list[dict[str, Any]] = []
     extraction_warnings: list[str] = []
     limitations: list[str] = []
 

@@ -13,12 +13,12 @@ ROLE_TAXONOMY = {
     "Data Analyst": {"domain": "Data", "aliases": ["data analyst"], "skills": ["excel", "sql", "power bi", "tableau", "statistics", "data visualization"]},
     "Business Data Analyst": {"domain": "Data", "aliases": ["business data analyst"], "skills": ["sql", "excel", "statistics", "requirements gathering", "data visualization"]},
     "Business Intelligence Analyst": {"domain": "Data", "aliases": ["bi analyst", "business intelligence"], "skills": ["sql", "power bi", "tableau", "data visualization", "etl"]},
-    "Data Scientist": {"domain": "Data", "aliases": ["data science"], "skills": ["python", "pandas", "numpy", "scikit-learn", "statistics", "machine learning"]},
-    "Machine Learning Engineer": {"domain": "AI/ML", "aliases": ["ml engineer", "machine learning"], "skills": ["python", "pandas", "numpy", "scikit-learn", "tensorflow", "pytorch", "feature engineering"]},
-    "AI Engineer": {"domain": "AI/ML", "aliases": ["artificial intelligence engineer"], "skills": ["python", "machine learning", "deep learning", "tensorflow", "pytorch"]},
-    "Generative AI Engineer": {"domain": "AI/ML", "aliases": ["gen ai engineer", "generative ai"], "skills": ["python", "llm", "prompt engineering", "retrieval augmented generation", "embeddings"]},
-    "NLP Engineer": {"domain": "AI/ML", "aliases": ["natural language processing"], "skills": ["python", "nlp", "nltk", "spacy", "transformers", "text classification"]},
-    "Computer Vision Engineer": {"domain": "AI/ML", "aliases": ["computer vision"], "skills": ["python", "opencv", "pytorch", "tensorflow", "image processing"]},
+    "Data Scientist": {"domain": "Data", "aliases": ["data science", "data scientist"], "skills": ["python", "pandas", "numpy", "scikit-learn", "statistics", "machine learning", "model evaluation", "experimentation"]},
+    "Machine Learning Engineer": {"domain": "AI/ML", "aliases": ["ml engineer", "machine learning engineer", "machine learning"], "skills": ["python", "pandas", "numpy", "scikit-learn", "tensorflow", "pytorch", "feature engineering", "model evaluation", "hyperparameter tuning", "random forest"]},
+    "AI Engineer": {"domain": "AI/ML", "aliases": ["ai/ml engineer", "ai ml engineer", "artificial intelligence engineer", "ai engineer"], "skills": ["python", "machine learning", "deep learning", "tensorflow", "pytorch", "model evaluation", "fastapi"]},
+    "Generative AI Engineer": {"domain": "AI/ML", "aliases": ["gen ai engineer", "generative ai"], "skills": ["python", "llm", "prompt engineering", "retrieval augmented generation", "embeddings", "transformers"]},
+    "NLP Engineer": {"domain": "AI/ML", "aliases": ["nlp engineer", "natural language processing"], "skills": ["python", "nlp", "nltk", "spacy", "transformers", "text classification", "model evaluation"]},
+    "Computer Vision Engineer": {"domain": "AI/ML", "aliases": ["computer vision engineer", "computer vision"], "skills": ["python", "opencv", "pytorch", "tensorflow", "image processing", "model evaluation"]},
     "Data Engineer": {"domain": "Data", "aliases": ["data engineering"], "skills": ["python", "sql", "spark", "etl", "airflow", "data pipelines"]},
     "Database Administrator": {"domain": "Technology", "aliases": ["database administrator", "dba"], "skills": ["sql", "postgresql", "mysql", "backup", "database performance"]},
     "QA Engineer": {"domain": "Quality", "aliases": ["quality assurance", "qa engineer"], "skills": ["test planning", "manual testing", "regression testing", "jira"]},
@@ -55,4 +55,5 @@ ROLE_TAXONOMY = {
 }
 
 for _metadata in ROLE_TAXONOMY.values():
-    _metadata["skills"] = list(dict.fromkeys(_metadata["skills"] + _COMMON))
+    _metadata["skills"] = list(dict.fromkeys(_metadata["skills"]))
+    _metadata["competencies"] = list(_COMMON)
